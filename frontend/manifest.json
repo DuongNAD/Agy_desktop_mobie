@@ -1,0 +1,73 @@
+{
+  "name": "AgyMobile — Antigravity Desktop Mobile Controller",
+  "short_name": "AgyMobile",
+  "description": "High-performance remote mobile controller and PWA dashboard for Antigravity 2.0 and Windows desktop workspace.",
+  "start_url": "/",
+  "id": "com.antigravity.agymobile.pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "theme_color": "#0a0e17",
+  "background_color": "#0a0e17",
+  "categories": ["developer-tools", "utilities", "productivity"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Live Chat",
+      "short_name": "Chat",
+      "description": "Open Antigravity Live Streaming Chat",
+      "url": "/#tab-chat",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Web Terminal",
+      "short_name": "Terminal",
+      "description": "Open Touch PowerShell Terminal",
+      "url": "/#tab-terminal",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "File Explorer",
+      "short_name": "Files",
+      "description": "Explore and edit workspace code",
+      "url": "/#tab-files",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "System Telemetry",
+      "short_name": "System",
+      "description": "Monitor CPU, RAM, and desktop tasks",
+      "url": "/#tab-system",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

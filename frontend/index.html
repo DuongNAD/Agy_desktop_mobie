@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- Responsive Mobile Viewport with Safe-Area & Zoom Lock -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  
+  <title>AgyMobile — Antigravity Mobile Controller</title>
+  <meta name="description" content="Remote mobile controller and PWA dashboard for Antigravity 2.0 and Windows desktop workspace.">
+  
+  <!-- PWA Manifest & App Identity -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0e17">
+  <meta name="background-color" content="#0a0e17">
+  
+  <!-- iOS Safari PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AgyMobile">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/terminal.css">
+  <link rel="stylesheet" href="/css/editor.css">
+</head>
+<body>
+  <!-- Root App Shell Container -->
+  <div id="app" class="app-root">
+    
+    <!-- ================================================================= -->
+    <!-- Top Header Bar -->
+    <!-- ================================================================= -->
+    <header class="app-header" role="banner">
+      <div class="header-left">
+        <div class="brand-logo" aria-hidden="true">
+          <span class="logo-glyph">⚡</span>
+        </div>
+        <div class="header-titles">
+          <h1 class="brand-title">AgyMobile</h1>
+          <span id="header-subtitle" class="brand-subtitle">Antigravity 2.0</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <!-- Subagent Activity Indicator Pill -->
+        <button id="btn-subagent-badge" class="badge-pill hidden" aria-label="Active Subagents" title="Active Subagents">
+          <span class="pulse-dot"></span>
+          <span id="subagent-count-text">0 Agents</span>
+        </button>
+      </div>
+
+      <div class="header-right">
+        <!-- Connection Status Indicator -->
+        <div id="connection-badge" class="connection-pill disconnected" title="Connection Status">
+          <span class="status-indicator"></span>
+          <span id="connection-latency" class="latency-text">Offline</span>
+        </div>
+        
+        <!-- Auth / Settings Trigger -->
+        <button id="btn-auth-trigger" class="icon-button" aria-label="Authentication & Settings" title="Auth & Settings">
+          <svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ================================================================= -->
+    <!-- Main Content Area (Tab Views Container) -->
+    <!-- ================================================================= -->
+    <main id="app-main" class="app-main-viewport" role="main">
+      
+      <!-- --------------------------------------------------------------- -->
+      <!-- Tab 1: Antigravity Live Dashboard & Chat -->
+      <!-- --------------------------------------------------------------- -->
+      <section id="tab-chat" class="tab-panel active" role="tabpanel" aria-labelledby="nav-tab-chat">
+        <!-- Conversation Selector / Session Bar -->
+        <div class="session-selector-bar">
+          <div class="session-info">
+            <span class="session-label">Session:</span>
+            <select id="select-conversation" class="select-session" aria-label="Select Conversation">
+              <option value="">Loading sessions...</option>
+            </select>
+          </div>
+          <div class="session-actions">
+            <button id="btn-refresh-sessions" class="icon-button-small" aria-label="Refresh Sessions" title="Refresh">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6M1 20v-6h6"/>
+                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+              </svg>
+            </button>
+            <button id="btn-view-artifacts" class="icon-button-small" aria-label="View Artifacts" title="Artifacts & Plans">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Stream Scroll Container -->
+        <div id="chat-stream-container" class="chat-stream-container">
+          <div id="chat-messages" class="chat-messages-list">
+            <!-- Messages, Thoughts, and Tool Approvals rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Floating Scroll-To-Bottom Pill -->
+        <button id="btn-scroll-bottom" class="scroll-bottom-pill hidden" aria-label="Scroll to bottom">
+          <span>↓ New updates</span>
+        </button>
+
+        <!-- Slash Commands Popup -->
+        <div id="slash-popup" class="slash-popup hidden" role="listbox">
+          <div class="slash-item" data-cmd="/help"><span class="cmd-name">/help</span><span class="cmd-desc">Show command cheat sheet</span></div>
+          <div class="slash-item" data-cmd="/goal"><span class="cmd-name">/goal</span><span class="cmd-desc">Set or view current mission goal</span></div>
+          <div class="slash-item" data-cmd="/schedule"><span class="cmd-name">/schedule</span><span class="cmd-desc">Schedule timer or cron job</span></div>
+          <div class="slash-item" data-cmd="/teamwork-preview"><span class="cmd-name">/teamwork</span><span class="cmd-desc">Teamwork preview dispatch</span></div>
+          <div class="slash-item" data-cmd="/clear"><span class="cmd-name">/clear</span><span class="cmd-desc">Clear local messages view</span></div>
+        </div>
+
+        <!-- Prompt Input Composer Bar -->
+        <div class="chat-composer-container">
+          <!-- Slash Commands Quick Bar -->
+          <div class="slash-commands-bar" id="slash-commands-bar">
+            <button class="chip-btn" data-slash="/goal">🎯 /goal</button>
+            <button class="chip-btn" data-slash="/schedule">⏰ /schedule</button>
+            <button class="chip-btn" data-slash="/teamwork-preview">👥 /teamwork</button>
+            <button class="chip-btn" data-slash="/clear">🧹 /clear</button>
+            <button id="btn-subagents-drawer" class="chip-btn" title="Subagents">🤖 Subagents (<span id="badge-subagents-count">0</span>)</button>
+          </div>
+          
+          <form id="form-prompt" class="prompt-form" onsubmit="return false;">
+            <textarea
+              id="input-prompt"
+              class="prompt-textarea"
+              rows="1"
+              placeholder="Send prompt or /command..."
+              aria-label="Antigravity Prompt Input"
+            ></textarea>
+            <button id="btn-send-prompt" type="submit" class="btn-send" aria-label="Send Prompt" disabled>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- --------------------------------------------------------------- -->
+      <!-- Tab 2: File Explorer & Mobile Editor -->
+      <!-- --------------------------------------------------------------- -->
+      <section id="tab-files" class="tab-panel hidden" role="tabpanel" aria-labelledby="nav-tab-files">
+        <!-- Explorer Toolbar & Breadcrumbs -->
+        <div class="explorer-toolbar">
+          <div class="explorer-breadcrumbs" id="file-breadcrumbs">
+            <span class="crumb root" data-path="">workspace</span>
+          </div>
+          <div class="explorer-tools">
+            <input type="text" id="input-file-search" class="file-search-input" placeholder="Filter files..." aria-label="Filter files">
+            <button id="btn-file-refresh" class="icon-button-small" aria-label="Refresh Files" title="Refresh">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6M1 20v-6h6"/>
+                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Split / Dynamic Tree & Editor View -->
+        <div class="explorer-content-container">
+          <!-- Tree Navigation View -->
+          <div id="file-tree-view" class="file-tree-container">
+            <div id="file-tree-list" class="file-tree-list"></div>
+          </div>
+
+          <!-- Code Viewer / Editor Drawer -->
+          <div id="file-editor-view" class="file-editor-container hidden">
+            <div class="editor-header">
+              <button id="btn-editor-back" class="icon-button-small" aria-label="Back to Files">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+              </button>
+              <span id="editor-filename" class="editor-filepath">filename.ext</span>
+              <div class="editor-actions">
+                <button id="btn-toggle-diff" class="btn-sm-outline">Diff</button>
+                <button id="btn-editor-save" class="btn-sm-primary">Save</button>
+              </div>
+            </div>
+            
+            <div class="editor-body">
+              <div class="line-numbers" id="editor-line-numbers"></div>
+              <div id="editor-code-container" class="editor-code-container">
+                <textarea id="editor-textarea" class="editor-textarea" spellcheck="false"></textarea>
+              </div>
+            </div>
+
+            <div class="unsaved-bar hidden" id="editor-unsaved-bar">
+              <span>● Unsaved changes</span>
+              <button id="btn-discard-changes" class="btn-link">Discard</button>
+            </div>
+          </div>
+
+          <!-- Diff Viewer Panel -->
+          <div id="editor-diff-container" class="editor-diff-container hidden">
+            <div class="diff-header">
+              <button id="btn-close-diff" class="icon-button-small" aria-label="Back to Editor">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+              </button>
+              <span id="diff-filename" class="editor-filepath">Diff Viewer</span>
+              <div class="diff-stats" id="diff-stats"></div>
+            </div>
+            <div class="diff-content" id="diff-content-view"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- --------------------------------------------------------------- -->
+      <!-- Tab 3: Mobile Touch Terminal -->
+      <!-- --------------------------------------------------------------- -->
+      <section id="tab-terminal" class="tab-panel hidden" role="tabpanel" aria-labelledby="nav-tab-terminal">
+        <!-- Terminal Header Bar -->
+        <div class="terminal-header-bar">
+          <div class="terminal-title-group">
+            <span class="term-prompt-glyph">>_</span>
+            <span class="term-title">PowerShell 7 (Windows)</span>
+          </div>
+          <div class="terminal-actions">
+            <button id="btn-terminal-clear" class="btn-terminal-action">Clear</button>
+            <button id="btn-terminal-restart" class="btn-terminal-action">Restart</button>
+            <button id="btn-terminal-kill" class="btn-terminal-action danger">Ctrl+C</button>
+          </div>
+        </div>
+
+        <!-- VT100 Terminal Output Viewport -->
+        <div id="terminal-viewport" class="terminal-viewport">
+          <div id="terminal-screen" class="terminal-screen" tabindex="0" role="region" aria-label="Terminal Screen">
+            <div id="terminal-buffer" class="terminal-buffer"></div>
+          </div>
+        </div>
+
+        <!-- Sticky Virtual Touch Utility Keys Accessory Toolbar -->
+        <div id="terminal-accessory-bar" class="terminal-accessory-toolbar">
+          <div class="virtual-keys-scroll">
+            <button class="vkey vkey-special" data-key="Escape">Esc</button>
+            <button id="vkey-ctrl" class="vkey vkey-toggle" data-key="Control">Ctrl</button>
+            <button class="vkey vkey-special" data-key="Tab">Tab</button>
+            <button class="vkey vkey-danger" data-action="interrupt" data-key="CtrlC">Ctrl+C</button>
+            <button class="vkey" data-key="ArrowUp">▲</button>
+            <button class="vkey" data-key="ArrowDown">▼</button>
+            <button class="vkey" data-key="ArrowLeft">◄</button>
+            <button class="vkey" data-key="ArrowRight">►</button>
+            <button class="vkey" data-char="|">|</button>
+            <button class="vkey" data-char="~">~</button>
+            <button class="vkey" data-char="/">/</button>
+            <button class="vkey" data-char="-">-</button>
+            <button class="vkey" data-char="\">\</button>
+            <button class="vkey" data-char="$">$</button>
+          </div>
+        </div>
+
+        <!-- Terminal Quick Command Prompt Bar -->
+        <div class="terminal-input-bar">
+          <form id="form-terminal-input" class="terminal-input-form" onsubmit="return false;">
+            <span class="term-prompt-prefix">&gt;</span>
+            <input
+              type="text"
+              id="input-terminal-cmd"
+              class="terminal-cmd-input"
+              placeholder="Run terminal command..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              aria-label="Terminal Command Input"
+            />
+            <button type="submit" id="btn-terminal-run" class="btn-terminal-run">↵</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- --------------------------------------------------------------- -->
+      <!-- Tab 4: System Telemetry & Monitor -->
+      <!-- --------------------------------------------------------------- -->
+      <section id="tab-system" class="tab-panel hidden" role="tabpanel" aria-labelledby="nav-tab-system">
+        <div class="system-monitor-container">
+          <div class="section-title-bar">
+            <h2>Desktop System Telemetry</h2>
+            <button id="btn-telemetry-refresh" class="icon-button-small" aria-label="Refresh Telemetry">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6M1 20v-6h6"/>
+                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Gauges Grid -->
+          <div class="gauges-grid">
+            <!-- CPU Gauge Card -->
+            <div class="gauge-card">
+              <div class="gauge-label">CPU LOAD</div>
+              <div class="gauge-svg-container">
+                <svg viewBox="0 0 100 100" class="gauge-svg">
+                  <circle class="gauge-track" cx="50" cy="50" r="40"/>
+                  <circle id="gauge-cpu-bar" class="gauge-progress" cx="50" cy="50" r="40"/>
+                </svg>
+                <div class="gauge-value-text"><span id="metric-cpu-val">0</span>%</div>
+              </div>
+              <div id="metric-cpu-cores" class="gauge-subtext">Windows Host</div>
+            </div>
+
+            <!-- RAM Gauge Card -->
+            <div class="gauge-card">
+              <div class="gauge-label">RAM USAGE</div>
+              <div class="gauge-svg-container">
+                <svg viewBox="0 0 100 100" class="gauge-svg">
+                  <circle class="gauge-track" cx="50" cy="50" r="40"/>
+                  <circle id="gauge-ram-bar" class="gauge-progress" cx="50" cy="50" r="40"/>
+                </svg>
+                <div class="gauge-value-text"><span id="metric-ram-val">0</span>%</div>
+              </div>
+              <div id="metric-ram-sub" class="gauge-subtext">Memory Total</div>
+            </div>
+
+            <!-- Disk Gauge Card -->
+            <div class="gauge-card">
+              <div class="gauge-label">DISK USAGE</div>
+              <div class="gauge-svg-container">
+                <svg viewBox="0 0 100 100" class="gauge-svg">
+                  <circle class="gauge-track" cx="50" cy="50" r="40"/>
+                  <circle id="gauge-disk-bar" class="gauge-progress" cx="50" cy="50" r="40"/>
+                </svg>
+                <div class="gauge-value-text"><span id="metric-disk-val">0</span>%</div>
+              </div>
+              <div id="metric-disk-sub" class="gauge-subtext">Workspace Root</div>
+            </div>
+
+            <!-- Uptime Card -->
+            <div class="gauge-card">
+              <div class="gauge-label">SERVER UPTIME</div>
+              <div class="gauge-svg-container" style="display:flex;align-items:center;justify-content:center;">
+                <span id="metric-uptime-val" style="font-size:15px;font-weight:700;font-family:var(--font-mono);color:var(--cyber-cyan);">0h 0m</span>
+              </div>
+              <div id="metric-host-info" class="gauge-subtext">LAN Active</div>
+            </div>
+          </div>
+
+          <!-- Host Info Meta Grid -->
+          <div class="host-info-card">
+            <div class="info-row"><span class="info-k">LAN IP:</span><span class="info-v" id="info-lan-ip">127.0.0.1</span></div>
+            <div class="info-row"><span class="info-k">Uptime:</span><span class="info-v" id="info-uptime">0h 0m</span></div>
+            <div class="info-row"><span class="info-k">OS:</span><span class="info-v" id="info-os">Windows</span></div>
+            <div class="info-row"><span class="info-k">Latency:</span><span class="info-v" id="info-rtt">0 ms</span></div>
+          </div>
+
+          <!-- Active Background Processes Section -->
+          <div class="process-section">
+            <h3 class="subsection-title">Active Processes & Background Tasks</h3>
+            <div id="process-list-container" class="process-list-container">
+              <!-- Dynamically populated process rows -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================================================================= -->
+    <!-- Bottom Tab Navigation Bar -->
+    <!-- ================================================================= -->
+    <nav class="app-bottom-nav" role="navigation" aria-label="Main Navigation">
+      <button id="nav-tab-chat" class="nav-tab active" data-target="tab-chat" data-view="chat" role="tab" aria-selected="true" aria-controls="tab-chat">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+        <span class="nav-label">Chat</span>
+      </button>
+
+      <button id="nav-tab-files" class="nav-tab" data-target="tab-files" data-view="files" role="tab" aria-selected="false" aria-controls="tab-files">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+        </svg>
+        <span class="nav-label">Files</span>
+      </button>
+
+      <button id="nav-tab-terminal" class="nav-tab" data-target="tab-terminal" data-view="terminal" role="tab" aria-selected="false" aria-controls="tab-terminal">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="4 17 10 11 4 5"/>
+          <line x1="12" y1="19" x2="20" y2="19"/>
+        </svg>
+        <span class="nav-label">Terminal</span>
+      </button>
+
+      <button id="nav-tab-system" class="nav-tab" data-target="tab-system" data-view="system" role="tab" aria-selected="false" aria-controls="tab-system">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+          <line x1="6" y1="6" x2="6.01" y2="6"/>
+          <line x1="6" y1="18" x2="6.01" y2="18"/>
+        </svg>
+        <span class="nav-label">System</span>
+      </button>
+    </nav>
+
+    <!-- ================================================================= -->
+    <!-- Modal Containers & Drawers -->
+    <!-- ================================================================= -->
+
+    <!-- 1. Authentication Modal (PIN & QR Scanner) -->
+    <div id="modal-auth" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+      <div class="modal-sheet">
+        <div class="modal-drag-handle" aria-hidden="true"></div>
+        <div class="modal-header">
+          <h2 id="auth-modal-title" class="modal-title">Device Pairing & Auth</h2>
+          <button id="btn-close-auth-modal" class="btn-modal-close" aria-label="Close Auth Modal">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Auth Mode Toggle -->
+          <div class="auth-tabs">
+            <button id="tab-btn-pin" class="auth-tab-btn active">Enter PIN</button>
+            <button id="tab-btn-qr" class="auth-tab-btn">Scan PC QR</button>
+            <button id="tab-btn-token" class="auth-tab-btn">Paste Token</button>
+          </div>
+
+          <!-- PIN Pad Panel -->
+          <div id="auth-panel-pin" class="auth-panel">
+            <p class="auth-instruction">Enter the 6-digit PIN shown in your PC console:</p>
+            <div class="pin-display">
+              <span class="pin-dot"></span>
+              <span class="pin-dot"></span>
+              <span class="pin-dot"></span>
+              <span class="pin-dot"></span>
+              <span class="pin-dot"></span>
+              <span class="pin-dot"></span>
+            </div>
+            <div id="pin-alert" class="auth-alert hidden"></div>
+            <div class="pin-keypad">
+              <button class="keypad-btn" data-num="1" data-key="1">1</button>
+              <button class="keypad-btn" data-num="2" data-key="2">2</button>
+              <button class="keypad-btn" data-num="3" data-key="3">3</button>
+              <button class="keypad-btn" data-num="4" data-key="4">4</button>
+              <button class="keypad-btn" data-num="5" data-key="5">5</button>
+              <button class="keypad-btn" data-num="6" data-key="6">6</button>
+              <button class="keypad-btn" data-num="7" data-key="7">7</button>
+              <button class="keypad-btn" data-num="8" data-key="8">8</button>
+              <button class="keypad-btn" data-num="9" data-key="9">9</button>
+              <button class="keypad-btn fn" id="btn-pin-clear" data-action="clear">C</button>
+              <button class="keypad-btn" data-num="0" data-key="0">0</button>
+              <button class="keypad-btn fn" id="btn-pin-backspace" data-action="backspace">⌫</button>
+            </div>
+          </div>
+
+          <!-- QR Scanner Panel -->
+          <div id="auth-panel-qr" class="auth-panel hidden">
+            <p class="auth-instruction">Point camera at the QR code displayed on your PC screen:</p>
+            <div class="qr-camera-container">
+              <video id="qr-video-preview" class="qr-video-preview" playsinline></video>
+              <div class="qr-scanner-reticle"></div>
+            </div>
+            <div id="qr-alert" class="auth-alert hidden"></div>
+            <button id="btn-start-scanner" class="btn-primary-block">Start Camera</button>
+          </div>
+
+          <!-- Token Input Panel -->
+          <div id="auth-panel-token" class="auth-panel hidden">
+            <p class="auth-instruction">Paste manual JWT Token or Tunnel Pairing URL:</p>
+            <textarea id="input-token-paste" class="token-textarea" placeholder="Paste eyJhbGciOi... or http://.../?token=..."></textarea>
+            <button id="btn-submit-token" class="btn-primary-block">Connect with Token</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Artifacts & Plans Modal -->
+    <div id="modal-artifacts" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="artifacts-modal-title">
+      <div class="modal-sheet full-height">
+        <div class="modal-drag-handle" aria-hidden="true"></div>
+        <div class="modal-header">
+          <div class="drawer-title-group">
+            <h2 id="artifacts-modal-title" class="modal-title">Artifacts & Plans</h2>
+            <span class="progress-chip" id="artifacts-progress-chip" style="font-size:11px;color:var(--cyber-cyan);margin-left:8px;"></span>
+          </div>
+          <button id="btn-close-artifacts-modal" class="btn-modal-close" aria-label="Close Artifacts Modal">✕</button>
+        </div>
+        <div class="artifacts-body" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+          <div id="artifacts-tab-bar" class="artifacts-tab-bar">
+            <!-- Dynamic file tabs (e.g. plan.md, progress.md) -->
+          </div>
+          <div id="artifact-content-view" class="artifact-content-view markdown-body">
+            <p class="empty-text">No active artifacts found for this session.</p>
+          </div>
+          <div class="artifact-footer">
+            <button id="btn-copy-artifact" class="btn-secondary">📋 Copy Markdown</button>
+            <button id="btn-refresh-artifact" class="btn-secondary">🔄 Refresh</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Subagents Hierarchy Modal -->
+    <div id="modal-subagents" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="subagents-modal-title">
+      <div class="modal-sheet">
+        <div class="modal-drag-handle" aria-hidden="true"></div>
+        <div class="modal-header">
+          <div class="drawer-title-group">
+            <h2 id="subagents-modal-title" class="modal-title">Subagent Hierarchy</h2>
+            <span class="active-count-chip" id="subagents-active-chip" style="font-size:11px;color:var(--neon-green);margin-left:8px;"></span>
+          </div>
+          <button id="btn-close-subagents-modal" class="btn-modal-close" aria-label="Close Subagents Modal">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="subagent-tree-container" class="subagent-tree-container">
+            <!-- Dynamic subagent cards -->
+          </div>
+          <div id="subagent-detail-panel" class="subagent-detail-panel hidden" style="margin-top:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <button id="btn-back-to-tree" class="btn-secondary" style="width:auto;padding:4px 10px;">← Back</button>
+              <h4 id="detail-agent-name" style="font-family:var(--font-mono);font-size:13px;color:var(--cyber-cyan);"></h4>
+            </div>
+            <div id="detail-agent-content" style="max-height:220px;overflow-y:auto;background:#050811;padding:8px;border-radius:var(--radius-sm);font-size:11px;font-family:var(--font-mono);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite" role="status"></div>
+  </div>
+
+  <!-- Application Bootstrap -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
