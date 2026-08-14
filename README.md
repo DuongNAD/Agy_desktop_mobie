@@ -11,37 +11,38 @@
 
 ---
 
-## 📑 Mục lục / Table of Contents
+## 📑 Table of Contents
 
-1. [Tổng quan dự án / Overview](#-tổng-quan-dự-án--overview)
-2. [Kiến trúc hệ thống / Architecture & Topology](#-kiến-trúc-hệ-thống--architecture--topology)
-3. [Danh mục tính năng / Feature Matrix (F01 – F20)](#-danh-mục-tính-năng--feature-matrix-f01--f20)
-4. [Hướng dẫn khởi chạy / Quick Start](#-hướng-dẫn-khởi-chạy--quick-start)
-5. [Cài đặt PWA trên điện thoại / Mobile PWA Setup](#-cài-đặt-pwa-trên-điện-thoại--mobile-pwa-setup)
-6. [Mô hình bảo mật & Sandbox / Security Model](#-mô-hình-bảo-mật--sandbox--security-model)
-7. [Khả năng chịu tải & Chịu lỗi / Benchmarks & Fault Tolerance](#-khả-năng-chịu-tải--chịu-lỗi--benchmarks--fault-tolerance)
-8. [Tài liệu API & WebSocket / API Reference](#-tài-liệu-api--websocket--api-reference)
-9. [Truy cập từ xa qua Internet / Remote Tunneling Guide](#-truy-cập-từ-xa-qua-internet--remote-tunneling-guide)
-10. [Hướng dẫn kiểm thử tự động / Automated Testing Guide](#-hướng-dẫn-kiểm-thử-tự-động--automated-testing-guide)
-11. [Cấu hình môi trường / Configuration Reference](#-cấu-hình-môi-trường--configuration-reference)
-12. [Khắc phục sự cố / Troubleshooting & FAQ](#-khắc-phục-sự-cố--troubleshooting--faq)
-
----
-
-## 🌟 Tổng quan dự án / Overview
-
-**AgyMobile** biến thiết bị di động (iPhone, iPad, Android) thành trung tâm điều khiển từ xa mượt mà, trực quan cho **Google Antigravity 2.0** và máy tính Windows của bạn:
-
-- 💬 **Live Antigravity 2.0 Session Hub**: Stream transcript thời gian thực, hiển thị khối suy nghĩ (thoughts) có thể đóng mở, cây phân cấp Subagent đa tầng, và gửi lệnh / slash command (`/goal`, `/schedule`, `/teamwork-preview`).
-- 💻 **Mobile Touch Terminal (PowerShell)**: Terminal tương tác thời gian thực với bộ dựng màu ANSI 256 / 24-bit TrueColor, bộ đệm cuộn 1,000 dòng và thanh phím ảo trợ năng (`ESC`, `CTRL`, `TAB`, `CTRL+C`, `▲▼◀▶`, `CLEAR`).
-- 📁 **Mobile File Explorer & Visual Diff**: Duyệt cây thư mục, tìm kiếm, xem code highlight cú pháp, chỉnh sửa mã nguồn và xem diff trực quan với cơ chế lưu nguyên tử (atomic save) an toàn trong sandbox.
-- 📊 **System Telemetry Dashboard**: Đồng hồ đo SVG thời gian thực cho CPU, RAM, Disk, Uptime, và trình quản lý tác vụ nền cho phép kill process an toàn.
-- ⚡ **Ghép nối 1 chạm không cần cấu hình**: Mã QR ASCII độ tương phản cao ngay trên Terminal Desktop + Trình quét mã QR Camera trực tiếp trên trình duyệt điện thoại.
-- 📱 **Chuẩn PWA 100dvh**: Giao diện responsive vừa vặn màn hình di động, hỗ trợ Dynamic Island/Notch trên iOS Safari, Service Worker offline caching.
+1. [Overview & Key Highlights](#-overview--key-highlights)
+2. [System Architecture & Topology](#-system-architecture--topology)
+3. [Feature Inventory (F01 – F20)](#-feature-inventory-f01--f20)
+4. [Quick Start](#-quick-start)
+5. [Mobile PWA Installation Guide (iOS / Android)](#-mobile-pwa-installation-guide)
+6. [Security & Sandbox Architecture](#-security--sandbox-architecture)
+7. [Performance & Concurrency Benchmarks](#-performance--concurrency-benchmarks)
+8. [API & WebSocket Specifications](#-api--websocket-specifications)
+9. [Internet Remote Access & Tunneling Guide](#-internet-remote-access--tunneling-guide)
+10. [5-Tier Automated Testing Guide](#-5-tier-automated-testing-guide)
+11. [Configuration Reference](#-configuration-reference)
+12. [Troubleshooting & FAQ](#-troubleshooting--faq)
+13. [License](#-license)
 
 ---
 
-## 🏗 Kiến trúc hệ thống / Architecture & Topology
+## 🌟 Overview & Key Highlights
+
+**AgyMobile** transforms any modern smartphone or tablet (iPhone, iPad, Android phone/tablet) into an intuitive, touch-optimized remote command center for **Google Antigravity 2.0** and your Windows development environment:
+
+- 💬 **Live Antigravity 2.0 Session Hub**: Real-time transcript streaming, collapsible thought accordions, interactive multi-agent hierarchy tree, and remote prompt / slash-command dispatching (`/goal`, `/schedule`, `/teamwork-preview`).
+- 💻 **Mobile Touch Terminal**: Interactive Windows PowerShell console with full ANSI 256-color & 24-bit TrueColor rendering, 1,000-line circular scrollback buffer, and mobile accessory toolbar (`ESC`, `CTRL`, `TAB`, `CTRL+C`, `▲▼◀▶`, `CLEAR`).
+- 📁 **Workspace File Explorer & Visual Diff**: Browse directory trees, search files, view syntax-highlighted code, perform touch-friendly code edits, and review side-by-side / inline diffs with atomic saves inside the workspace sandbox.
+- 📊 **System Telemetry Dashboard**: Real-time circular SVG gauges for CPU (aggregate & per-core), RAM, Disk, Network I/O, Uptime, and task manager with one-tap process termination.
+- ⚡ **Zero-Friction Pairing**: High-contrast terminal ASCII QR code on desktop startup + in-browser mobile camera QR scanner for instant 1-second authenticated login.
+- 📱 **Mobile-First PWA (100dvh)**: Fullscreen responsive app shell, iOS Safari Dynamic Island / Notch safe-area inset handling, Cache-First Service Worker, and offline resiliency.
+
+---
+
+## 🏗 System Architecture & Topology
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -83,63 +84,63 @@
 
 ---
 
-## 📦 Danh mục tính năng / Feature Matrix (F01 – F20)
+## 📦 Feature Inventory (F01 – F20)
 
-| # | Tính năng | Phân hệ | Mô tả chi tiết |
+| # | Feature | Subsystem | Description |
 |---|---|---|---|
-| **F01** | Realtime Conversation List | Session Hub | Liệt kê các phiên trò chuyện Antigravity từ SQLite kèm số bước và trạng thái. |
-| **F02** | Live Transcript Streaming | Session Hub | Tailing `transcript.jsonl` độ trễ thấp, hỗ trợ đóng mở khối suy nghĩ. |
-| **F03** | Subagent Hierarchy Tree | Session Hub | Trực quan hóa cây quan hệ giữa Parent Agent và các Subagent theo thời gian thực. |
-| **F04** | Remote Prompt & Slash Commands | Session Hub | Gửi câu lệnh và kích hoạt slash command (`/goal`, `/schedule`, `/teamwork-preview`). |
-| **F05** | Remote Tool Approvals | Session Hub | Thẻ duyệt/từ chối gọi tool tương tác trực tiếp từ điện thoại. |
-| **F06** | Artifacts & Plans Viewer | Session Hub | Đồng bộ và hiển thị kế hoạch (`task.md`), specs và code artifacts dạng Markdown. |
-| **F07** | Mobile File Explorer | Workspace Controller | Điều hướng cây thư mục, xem và chỉnh sửa file trong sandbox mã nguồn. |
-| **F08** | Fast File Diff Viewer | Workspace Controller | Xem so sánh khác biệt (diff) trực quan trước khi lưu file. |
-| **F09** | Mobile Web Terminal | Terminal Subsystem | Terminal PowerShell tương tác 2 chiều với đầy đủ màu sắc ANSI VT100. |
-| **F10** | Virtual Touch Utility Keys | Terminal Subsystem | Thanh phím ảo hỗ trợ `ESC`, `CTRL`, `TAB`, `CTRL+C`, phím mũi tên và xóa màn hình. |
-| **F11** | System Telemetry Monitor | Telemetry Subsystem | Giám sát phần cứng CPU, RAM, Disk, Uptime và quản lý danh sách tiến trình. |
-| **F12** | LAN IP Auto-Discovery | Network & Security | Tự động phát hiện địa chỉ IPv4 cục bộ trên các card mạng LAN/Wi-Fi. |
-| **F13** | Dual-Mode QR Generator | Network & Security | Mã QR ASCII ngay trên terminal khởi động + REST API xuất ảnh QR PNG/SVG. |
-| **F14** | PIN & JWT Authentication | Security Subsystem | Xác thực PIN 6 số với `compare_digest` chống Timing Attack, token JWT HS256. |
-| **F15** | Tunneling Integration | Network Subsystem | Hỗ trợ cấu hình Cloudflare Tunnel, Tailscale và Ngrok để truy cập từ xa. |
-| **F16** | Mobile PWA & Touch Layout | Frontend Shell | Layout `100dvh`, CSS safe-area, Service Worker cache-first cho ứng dụng PWA. |
-| **F17** | In-App QR Camera Scanner | Frontend Shell | Quét mã QR desktop bằng camera điện thoại để đăng nhập trong 1 giây. |
-| **F18** | Comprehensive Test Suite | Quality Assurance | Ma trận kiểm thử 5 cấp độ (751 bài test) đạt tỉ lệ pass 100%. |
-| **F19** | 1-Click Startup Automation | Automation | Script batch 1 chạm (`start.bat`, `run.bat`) tự cài thư viện và bật trình duyệt. |
-| **F20** | Full Documentation | Documentation | Tài liệu kiến trúc, đặc tả API, hướng dẫn kiểm thử và cẩm nang bảo mật. |
+| **F01** | Realtime Conversation List | Session Hub | Live enumeration of active Antigravity conversations, step counts, and statuses from SQLite. |
+| **F02** | Live Transcript Streaming | Session Hub | Low-latency tailing of `transcript.jsonl` with collapsible thinking accordions and token streaming. |
+| **F03** | Subagent Hierarchy Tree | Session Hub | Interactive visualization of parent-child subagent trees with live status indicators. |
+| **F04** | Remote Prompt & Slash Commands | Session Hub | Dispatch prompts and trigger slash commands (`/goal`, `/schedule`, `/teamwork-preview`) via CLI. |
+| **F05** | Remote Tool Approvals | Session Hub | Interactive tool call approval cards; update permission grant policies on the fly. |
+| **F06** | Artifacts & Plans Viewer | Session Hub | Live synchronization and Markdown rendering of plans (`task.md`), specs, and code diffs. |
+| **F07** | Mobile File Explorer | Workspace Controller | Fast tree navigation, file viewing, and mobile touch code editor within the project sandbox. |
+| **F08** | Fast File Diff Viewer | Workspace Controller | Side-by-side / inline visual diff highlighting for workspace modifications before saving. |
+| **F09** | Mobile Web Terminal | Terminal Subsystem | Bi-directional interactive Windows PowerShell console with full ANSI VT100 colors. |
+| **F10** | Virtual Touch Utility Keys | Terminal Subsystem | Mobile accessory toolbar with `ESC`, `CTRL`, `TAB`, `CTRL+C`, arrow keys, and screen clear. |
+| **F11** | System Telemetry Monitor | Telemetry Subsystem | Real-time circular SVG gauges for CPU, RAM, Disk, Uptime, and task manager with kill actions. |
+| **F12** | LAN IP Auto-Discovery | Network & Security | Automatic detection of local IPv4 address across multi-adapter environments. |
+| **F13** | Dual-Mode QR Code Generator | Network & Security | High-contrast terminal ASCII QR code on startup + REST endpoint for PNG/SVG QR pairing codes. |
+| **F14** | PIN & JWT Authentication | Security Subsystem | Constant-time 6-digit PIN verification, HMAC-SHA256 JWT tokens, and IP brute-force protection. |
+| **F15** | Tunneling Integration | Network Subsystem | Native configuration guides and status hooks for Cloudflare Tunnel, Tailscale, and Ngrok. |
+| **F16** | Mobile PWA & Touch Layout | Frontend Shell | Responsive `100dvh` layout, CSS safe-area insets, bottom navigation, and Service Worker caching. |
+| **F17** | In-App QR Camera Scanner | Frontend Shell | In-browser mobile camera scanner to scan desktop QR code for 1-second authenticated login. |
+| **F18** | Comprehensive Test Suite | Quality Assurance | 5-tier test matrix (751 test cases across 25 test suites) verifying 100% pass rate. |
+| **F19** | 1-Click Startup Automation | Automation | Production Windows batch scripts (`start.bat`, `run.bat`) with auto-install and browser launch. |
+| **F20** | Full Documentation | Documentation | Complete architectural documentation, API contracts, setup guides, and troubleshooting manual. |
 
 ---
 
-## 🚀 Hướng dẫn khởi chạy / Quick Start
+## 🚀 Quick Start
 
-### Cách 1: Khởi chạy 1 chạm trên Windows (Khuyên dùng)
+### Option A: 1-Click Startup on Windows (Recommended)
 
-Chỉ cần nhấp đúp vào `start.bat` hoặc chạy từ PowerShell / Command Prompt:
+Double-click `start.bat` in the project root or run from Command Prompt / PowerShell:
 
 ```cmd
 start.bat
 ```
 
-**`start.bat` tự động thực hiện:**
-1. Kiểm tra môi trường Python 3.11+ hoặc `uv`.
-2. Tạo và cấu hình môi trường ảo `.venv`.
-3. Cài đặt / cập nhật các gói phụ thuộc cần thiết.
-4. Tự phát hiện địa chỉ IP LAN và vẽ mã QR ASCII trên terminal.
-5. Tự mở trình duyệt tới `http://localhost:8765`.
-6. Khởi chạy máy chủ FastAPI Uvicorn trên cổng `8765`.
+**`start.bat` automatically handles:**
+1. Checks for Python 3.11+ or Astral `uv`.
+2. Creates and manages the `.venv` virtual environment.
+3. Automatically installs or updates dependencies (`fastapi`, `uvicorn`, `psutil`, `qrcode`, `pyjwt`).
+4. Detects LAN IP and renders a high-contrast Unicode QR code in the terminal.
+5. Launches the default desktop browser to `http://localhost:8765`.
+6. Starts the Uvicorn ASGI server on `0.0.0.0:8765`.
 
-#### Các tùy chọn nâng cao cho `start.bat`
+#### Optional Flags for `start.bat`
 ```cmd
-start.bat --no-browser      :: Chạy server không tự mở trình duyệt
-start.bat --install         :: Ép cài đặt lại toàn bộ dependencies
-start.bat --port 8888       :: Đổi cổng khởi chạy sang 8888
+start.bat --no-browser      :: Start server without opening default browser
+start.bat --install         :: Force reinstallation of project dependencies
+start.bat --port 8888       :: Run server on a custom port
 ```
 
 ---
 
-### Cách 2: Khởi chạy siêu tốc cho lập trình viên (`run.bat`)
+### Option B: Fast Runner (Instant Developer Launch)
 
-Khởi động tức thì trong `< 0.05s` (bỏ qua bước kiểm tra cài đặt thư viện):
+For daily development without dependency checks (< 0.05s startup):
 
 ```cmd
 run.bat
@@ -147,146 +148,237 @@ run.bat
 
 ---
 
-### Cách 3: Cài đặt thủ công bằng Python
+### Option C: Manual Setup via uv / pip
 
 ```bash
-# 1. Tạo môi trường ảo
+# 1. Create and activate virtual environment
 python -m venv .venv
 .venv\Scripts\activate
 
-# 2. Cài đặt gói ở chế độ editable
+# 2. Install package in editable mode
 pip install -e .
 
-# 3. Khởi chạy máy chủ
+# 3. Launch server
 python -m backend.main
 ```
 
 ---
 
-## 📱 Cài đặt PWA trên điện thoại / Mobile PWA Setup
+## 📱 Mobile PWA Installation Guide
 
-### Bước 1: Kết nối thiết bị
-- Đảm bảo điện thoại cùng mạng Wi-Fi với máy tính (hoặc qua [Cloudflare Tunnel](#-truy-cập-từ-xa-qua-internet--remote-tunneling-guide)).
-- Quét mã QR trên màn hình terminal bằng Camera điện thoại hoặc truy cập `http://<IP_LAN>:8765`.
+AgyMobile is designed as a Progressive Web App (PWA) with native mobile ergonomics, standalone display mode, and offline asset caching.
 
-### Bước 2: Ghim ra màn hình chính (Add to Home Screen)
+### Step 1: Connect to Server
+- Ensure your mobile phone is connected to the same Wi-Fi network as your PC (or use [Tunneling](#-internet-remote-access--tunneling-guide)).
+- Scan the ASCII QR code displayed in your desktop terminal, or navigate to `http://<LAN_IP>:8765/?token=<TOKEN>`.
 
-#### Trên iPhone / iPad (iOS Safari)
-1. Mở liên kết trên **Safari**.
-2. Bấm nút **Share** (biểu tượng hình vuông có mũi tên trỏ lên).
-3. Chọn **"Add to Home Screen"** (Thêm vào Màn hình chính).
-4. Bấm **"Add"**. Mở AgyMobile từ màn hình chính để dùng ở chế độ Fullscreen PWA không có thanh địa chỉ Safari!
+### Step 2: Add to Home Screen
 
-#### Trên Android (Google Chrome)
-1. Mở liên kết trên **Chrome**.
-2. Bấm biểu tượng 3 chấm ở góc trên bên phải.
-3. Chọn **"Install app"** hoặc **"Add to Home screen"**.
-4. Xác nhận cài đặt.
+#### iOS Safari (iPhone / iPad)
+1. Open the URL in **Safari**.
+2. Tap the **Share** icon (square with arrow pointing up) on the bottom toolbar.
+3. Scroll down and tap **"Add to Home Screen"** (+ icon).
+4. Tap **"Add"** in the top-right corner.
+5. Launch **AgyMobile** from your home screen — it will open in standalone fullscreen mode without Safari browser chrome!
 
----
+#### Android Chrome
+1. Open the URL in **Google Chrome**.
+2. Tap the **Menu** (three dots in top-right corner).
+3. Tap **"Install app"** or **"Add to Home screen"**.
+4. Confirm installation. The AgyMobile icon will appear in your app drawer and home screen.
 
-## 🔐 Mô hình bảo mật & Sandbox / Security Model
-
-1. **Xác thực PIN chống Timing Attack**:
-   - Sử dụng `hmac.compare_digest` để so khớp mã PIN 6 chữ số, ngăn chặn tấn công trễ thời gian.
-2. **Khóa chống Brute-Force (IP Rate Limiting)**:
-   - Cửa sổ trượt ghi nhận số lần đăng nhập sai theo IP. 5 lần thử sai trong 60 giây sẽ bị khóa 300 giây (`HTTP 429 Retry-After: 300`).
-3. **Mã hóa Token JWT HS256**:
-   - Token JWT được ký bằng khóa bí mật với thuật toán HS256, tự động vô hiệu hóa token hết hạn hoặc giả mạo header.
-4. **Phòng thủ Sandbox Windows Đa Lớp**:
-   - Chống triệt để các kiểu tấn công duyệt đường dẫn: `../`, URL encoded (`%252e%252e`), NTFS Alternate Data Streams (`:`), UNC Paths (`\\server\share`), DOS Device Names (`CON`, `PRN`, `AUX`, `NUL`, `COM1-9`, `LPT1-9`), và Null Byte injection.
+### Step 3: In-App QR Camera Pairing
+If you ever get logged out, open the login modal and tap **"Scan QR Code"**. Grant camera permission to point your phone camera at the desktop terminal and log in instantly without typing PINs!
 
 ---
 
-## ⚡ Khả năng chịu tải & Chịu lỗi / Benchmarks & Fault Tolerance
+## 🔐 Security & Sandbox Architecture
 
-Theo kết quả từ [`COMPREHENSIVE_AUDIT_REPORT.md`](COMPREHENSIVE_AUDIT_REPORT.md):
+AgyMobile implements defense-in-depth security engineered for local network and tunneling scenarios:
 
-- **Độ trễ API Telemetry**: `< 0.05 ms` (Nhờ cơ chế in-memory snapshot & offload `asyncio.to_thread`).
-- **Lưu lượng WebSocket**: `> 10,000 messages/sec` burst capacity.
-- **Rò rỉ bộ nhớ**: `< 50 KB` sau 1,000 chu kỳ kết nối/ngắt kết nối WebSocket liên tục.
-- **Khắc phục xung đột khóa file Windows NTFS**: Tích hợp cơ chế ghi file tạm nguyên tử (atomic swap) với retry & exponential backoff chống lỗi `WinError 32`.
-- **Đọc SQLite không chặn (Non-blocking RO)**: Áp dụng `PRAGMA query_only = ON` và `busy_timeout` loại trừ 100% rủi ro deadlock với Antigravity Desktop.
+### 1. Constant-Time PIN Verification
+- 6-digit numeric PIN configured via `AGY_AUTH_PIN` or `Settings.AUTH_PIN` (default `123456`).
+- Verified using `hmac.compare_digest` to eliminate timing side-channel attacks.
+
+### 2. Cryptographic JWT Access Tokens
+- Signed with HMAC-SHA256 using `JWT_SECRET`.
+- Configurable expiration (default: 86400s / 24 hours).
+- Transmitted via `Authorization: Bearer <token>` HTTP header or `?token=...` query parameter for WebSockets.
+
+### 3. In-Memory Anti-Brute-Force Rate Limiter
+- Tracks failed login attempts per client IP address using a sliding window.
+- 5 consecutive failures within 60 seconds triggers a **300-second (5-minute) lockout** (`HTTP 429 Retry-After: 300`).
+
+### 4. Windows-Hardened Workspace Path Sandbox
+- Enforces strict canonical path containment inside `WORKSPACE_ROOT`.
+- Prevents directory traversal (`../`, `%252e%252e`), null-byte injection, and symlink escapes.
+- Blocks Windows reserved device names (`CON`, `PRN`, `AUX`, `NUL`, `COM1-9`, `LPT1-9`, `CONIN$`, `CONOUT$`) and NTFS Alternate Data Streams (`:`).
+
+### 5. Safe Subprocess Execution
+- Subprocesses executed via parameterized argument lists (`asyncio.create_subprocess_exec`, no `shell=True`).
+- Safe process tree termination (`taskkill /F /T`) with protected PID guards (blocks termination of PID 0, PID 4 System, and server PID).
 
 ---
 
-## 🌐 Truy cập từ xa qua Internet / Remote Tunneling Guide
+## ⚡ Performance & Concurrency Benchmarks
 
-Truy cập an toàn vào AgyMobile từ bất kỳ đâu qua Internet mà không cần mở port Router (NAT):
+Empirical metrics from the [Comprehensive Audit Report](COMPREHENSIVE_AUDIT_REPORT.md):
 
-### 1. Cloudflare Tunnel (Khuyên dùng - Miễn phí & có sẵn SSL)
+| Metric / Subsystem | Measured Value | SLA / Requirement | Status |
+|---|---|---|---|
+| **Telemetry API Latency** (`/api/system/metrics`) | **< 0.05 ms** (In-memory cached snapshot) | < 50 ms | **EXCEEDED** |
+| **Telemetry Polling Lag** | Offloaded to worker threads via `asyncio.to_thread` | Zero event loop lag | **PASS** |
+| **WebSocket Throughput** (`/ws/*`) | **> 10,000 msg/sec** burst capacity | High throughput | **PASS** |
+| **Terminal Backpressure** | Oldest-chunk eviction on `QueueFull` (capped at 1,000 chunks) | Bounded memory | **PASS** |
+| **Long-Running Memory Drift** | **< 50 KB** drift across 1,000 rapid connect/broadcast cycles | Zero memory leaks | **VERIFIED** |
+| **Windows File Lock Collision Resilience** | 5-attempt retry loop with exponential backoff on `WinError 32` | Zero write failures | **PASS** |
+| **SQLite Read-Only Concurrency** | `PRAGMA query_only = ON` + `busy_timeout = 3000ms` | Zero lock deadlocks | **PASS** |
+
+---
+
+## 📡 API & WebSocket Specifications
+
+### 1. REST API Endpoints
+
+#### Authentication
+- `POST /api/auth/login` — Body: `{"pin": "123456"}` → Response: `{"token": "jwt...", "expires_in": 86400, "status": "authenticated"}`
+- `GET /api/auth/qr` — Query: `?format=png` (`svg`, `ascii`, `json`) → Response: QR code image bytes or pairing JSON.
+- `GET /api/auth/verify` — Header: `Authorization: Bearer <token>` → Response: `{"valid": true, "user": "admin"}`
+
+#### System Telemetry (F11)
+- `GET /api/system/info` — Basic system telemetry snapshot (CPU %, RAM %, Disk %, Uptime, LAN IP).
+- `GET /api/system/metrics` — Granular hardware breakdown (per-core CPU, RAM bytes, partition list, network I/O).
+- `GET /api/system/processes?limit=20&sort_by=cpu` — Top active desktop processes.
+- `POST /api/system/tasks/{pid}/kill` — Terminate a background task with protected PID safeguards.
+
+#### Antigravity Session Hub (F01–F06)
+- `GET /api/conversations?limit=50` — List active Antigravity conversations from SQLite.
+- `GET /api/conversations/{id}/transcript?from_offset=0` — Fetch transcript steps and artifacts.
+- `POST /api/conversations/{id}/prompt` — Dispatch prompts or slash commands to Antigravity CLI.
+- `POST /api/conversations/{id}/tool-approval` — Submit tool approval or rejection decisions.
+- `GET /api/conversations/{id}/artifacts` — List markdown plans and artifacts.
+- `GET /api/conversations/{id}/subagents` — Nested subagent hierarchy tree.
+
+#### Workspace File Manager (F07–F08)
+- `GET /api/files/tree?path=src&depth=1` — Sandboxed directory tree enumeration.
+- `GET /api/files/content?path=src/main.py` — Read file content with UTF-8 encoding.
+- `POST /api/files/save` — Atomic file save (`.tmp` swap with retry backoff).
+- `POST /api/files/diff` — Generate unified diff between existing file and new content.
+
+---
+
+### 2. Real-Time WebSocket Channels
+
+#### A. Session Channel (`/ws/session?token=<token>`)
+- **Inbound Actions**:
+  - `{"action": "subscribe", "conversation_id": "<uuid>", "from_offset": 0}`
+  - `{"action": "send_prompt", "conversation_id": "<uuid>", "prompt": "...", "mode": "accept-edits"}`
+  - `{"action": "tool_decision", "conversation_id": "<uuid>", "tool_call_id": "...", "decision": "approve"|"reject"}`
+- **Outbound Events**:
+  - `{"type": "step_update", "conversation_id": "...", "step": {...}}`
+  - `{"type": "token_stream", "conversation_id": "...", "delta": "...", "kind": "thinking"|"content"}`
+  - `{"type": "tool_call_request", "conversation_id": "...", "tool_call": {...}}`
+  - `{"type": "subagent_status", "conversation_id": "...", "hierarchy": [...]}`
+
+#### B. Terminal Channel (`/ws/terminal?token=<token>`)
+- **Inbound Actions**:
+  - `{"type": "input", "data": "Get-Process\r"}`
+  - `{"type": "resize", "cols": 80, "rows": 24}`
+- **Outbound Events**:
+  - `{"type": "output", "data": "\x1b[32mPS E:\\Project>\x1b[0m "}`
+
+#### C. System Telemetry Channel (`/ws/system?token=<token>`)
+- **Outbound Broadcast**:
+  - Periodic frames (every 2.0s):
+    `{"type": "telemetry", "cpu": 14.5, "ram": 38.9, "disk": 45.0, "uptime": 3600.0, "tasks": [...]}`
+
+---
+
+## 🌐 Internet Remote Access & Tunneling Guide
+
+Access AgyMobile securely over the Internet without port forwarding:
+
+### 1. Cloudflare Tunnel (Zero Trust — Recommended)
 ```bash
-# 1. Cài đặt cloudflared trên Windows
+# 1. Install cloudflared on Windows
 winget install Cloudflare.cloudflared
 
-# 2. Bật tunnel chuyển tiếp tới cổng 8765
+# 2. Start a quick tunnel to port 8765
 cloudflared tunnel --url http://localhost:8765
 ```
-Cloudflare sẽ cung cấp một đường dẫn HTTPS công khai (ví dụ: `https://xxxx.trycloudflare.com`). Bạn chỉ cần mở URL này trên điện thoại để truy cập bảo mật qua mã hóa SSL!
+Cloudflare will output a public HTTPS URL (e.g. `https://random-id.trycloudflare.com`). Open this URL on your phone for immediate encrypted access with valid SSL!
 
-### 2. Tailscale (VPN Mesh nội bộ)
-1. Cài Tailscale trên PC và điện thoại.
-2. Kết nối cả hai thiết bị vào cùng tài khoản Tailscale.
-3. Mở trên điện thoại: `http://<IP_Tailscale_Cua_PC>:8765`.
+### 2. Tailscale (Mesh VPN)
+1. Install Tailscale on your desktop PC and mobile device.
+2. Join both devices to your private Tailnet.
+3. Access AgyMobile directly at `http://<desktop-tailscale-ip>:8765`.
+
+### 3. Ngrok
+```bash
+ngrok http 8765
+```
 
 ---
 
-## 🧪 Hướng dẫn kiểm thử tự động / Automated Testing Guide
+## 🧪 5-Tier Automated Testing Guide
 
-Dự án sở hữu ma trận kiểm thử 5 cấp độ với **751 bài test** (724 Pytest + 27 Node.js), đạt tỉ lệ pass 100%:
+AgyMobile includes an exhaustive 5-tier test matrix with **751 automated tests (724 Pytest backend & adversarial test cases + 27 Node.js hermetic frontend tests)** achieving a **100% pass rate**:
 
 ```powershell
-# Chạy toàn bộ 724 bài test backend & integration (Pytest)
+# 1. Run all 724 backend & integration tests (Pytest)
 py -3.11 -m pytest tests/ -v
 
-# Chạy bộ test giao diện PWA & bộ lọc ANSI VT100 (Node.js)
+# 2. Run hermetic Node.js ANSI / PWA test suite (27 tests)
 node tests/test_frontend_adversarial_suite.mjs
 
-# Chạy riêng nhóm kiểm tra Bảo mật & Sandbox
+# 3. Targeted test suites:
+# Security & Sandbox Hardening (F01–F05)
 py -3.11 -m pytest tests/test_security.py tests/test_adversarial_tier5_hardening.py -v
 
-# Chạy nhóm Stress-test chịu tải cao & Chaos
+# Concurrency & Stress Benchmarks
 py -3.11 -m pytest tests/test_adversarial_stress.py tests/test_adversarial_terminal_stress.py -v
 ```
 
 ---
 
-## ⚙ Cấu hình môi trường / Configuration Reference
+## ⚙ Configuration Reference
 
-| Biến môi trường | Mặc định | Ý nghĩa |
+Configuration can be set via environment variables or `.env` file:
+
+| Variable | Default | Description |
 |---|---|---|
-| `AGY_AUTH_PIN` / `AUTH_PIN` | `123456` | Mã PIN 6 số để đăng nhập từ di động |
-| `JWT_SECRET_KEY` / `JWT_SECRET` | tự sinh | Khóa bí mật ký token JWT |
-| `PORT` | `8765` | Cổng dịch vụ HTTP / WebSocket |
-| `HOST` | `0.0.0.0` | Địa chỉ IP bind server |
-| `WORKSPACE_ROOT` | thư mục hiện tại | Thư mục sandbox cho File Explorer |
-| `ANTIGRAVITY_DIR` | `~/.gemini/antigravity` | Đường dẫn thư mục dữ liệu Antigravity 2.0 |
-| `TOKEN_EXPIRY_SECONDS` | `86400` (24h) | Thời gian hết hạn của JWT Token |
-| `RATE_LIMIT_MAX_ATTEMPTS` | `5` | Số lần thử sai tối đa trước khi khóa IP |
-| `RATE_LIMIT_LOCKOUT_SECONDS` | `300` (5m) | Thời gian khóa IP sau khi vượt ngưỡng sai |
+| `AGY_AUTH_PIN` / `AUTH_PIN` | `123456` | 6-digit numeric PIN for mobile authentication |
+| `JWT_SECRET_KEY` / `JWT_SECRET` | auto-generated | Secret key for signing JWT tokens |
+| `PORT` | `8765` | Server port |
+| `HOST` | `0.0.0.0` | Server bind host address |
+| `WORKSPACE_ROOT` | current directory | Target workspace root for File Explorer |
+| `ANTIGRAVITY_DIR` | `~/.gemini/antigravity` | Path to Antigravity 2.0 configuration folder |
+| `TOKEN_EXPIRY_SECONDS` | `86400` (24h) | JWT access token validity period |
+| `RATE_LIMIT_MAX_ATTEMPTS` | `5` | Failed attempts before IP lockout |
+| `RATE_LIMIT_LOCKOUT_SECONDS` | `300` (5m) | Duration of IP lockout |
 
 ---
 
-## ❓ Khắc phục sự cố / Troubleshooting & FAQ
+## ❓ Troubleshooting & FAQ
 
-### Q: Tường lửa Windows Defender chặn kết nối từ điện thoại qua mạng LAN.
-**Khắc phục**: Mở PowerShell dưới quyền Administrator và thêm rule cho phép port 8765:
+### Q: Windows Defender Firewall blocks incoming mobile connections on LAN.
+**Solution**: Run PowerShell as Administrator and add an inbound firewall rule:
 ```powershell
 New-NetFirewallRule -DisplayName "AgyMobile Server" -Direction Inbound -LocalPort 8765 -Protocol TCP -Action Allow
 ```
 
-### Q: Camera trên trình duyệt di động không quét được mã QR.
-**Khắc phục**: Trình duyệt di động chỉ cho phép mở Camera qua kết nối **HTTPS** hoặc `localhost`. Khi dùng qua mạng LAN HTTP thông thường, hãy dùng ứng dụng Camera gốc của điện thoại để quét mã QR ASCII trên terminal, hoặc bật **Cloudflare Tunnel HTTPS**.
+### Q: In-app camera QR scanner is not working on mobile browser.
+**Solution**: Mobile browsers require **HTTPS** or `localhost` to access camera hardware. When connecting over raw LAN IP (`http://192.168.x.x`), use your phone's native Camera app to scan the terminal ASCII QR code, or use a Cloudflare HTTPS tunnel.
 
-### Q: Đổi mã PIN xác thực như thế nào?
-**Khắc phục**: Đặt biến môi trường `AGY_AUTH_PIN` trước khi chạy server:
+### Q: How do I change the 6-digit authentication PIN?
+**Solution**: Set the `AGY_AUTH_PIN` environment variable before starting:
 ```cmd
-set AGY_AUTH_PIN=654321
+set AGY_AUTH_PIN=987654
 start.bat
 ```
 
 ---
 
-## 📄 Bản quyền / License
+## 📄 License
 
-Phát hành theo giấy phép **MIT License** — Copyright (c) 2026 AgyMobile Contributors.
+MIT License — Copyright (c) 2026 AgyMobile Contributors.
