@@ -25,26 +25,97 @@ export class AuthModal {
 
   bindEvents() {
     // Mode Switcher Tabs
+    const tabBtnOtp = document.getElementById('tab-btn-otp');
     const tabBtnPin = document.getElementById('tab-btn-pin');
     const tabBtnQr = document.getElementById('tab-btn-qr');
     const tabBtnToken = document.getElementById('tab-btn-token');
 
+    const panelOtp = document.getElementById('auth-panel-otp');
     const panelPin = document.getElementById('auth-panel-pin');
     const panelQr = document.getElementById('auth-panel-qr');
     const panelToken = document.getElementById('auth-panel-token');
 
-    if (tabBtnPin && tabBtnQr && tabBtnToken) {
-      tabBtnPin.addEventListener('click', () => {
-        this.switchAuthTab('pin', [tabBtnPin, tabBtnQr, tabBtnToken], [panelPin, panelQr, panelToken]);
+    const allTabs = [tabBtnOtp, tabBtnPin, tabBtnQr, tabBtnToken].filter(Boolean);
+    const allPanels = [panelOtp, panelPin, panelQr, panelToken].filter(Boolean);
+
+    if (tabBtnOtp) {
+      tabBtnOtp.addEventListener('click', () => {
+        this.switchAuthTab('otp', allTabs, allPanels);
         this.stopCamera();
       });
+    }
+    if (tabBtnPin) {
+      tabBtnPin.addEventListener('click', () => {
+        this.switchAuthTab('pin', allTabs, allPanels);
+        this.stopCamera();
+      });
+    }
+    if (tabBtnQr) {
       tabBtnQr.addEventListener('click', () => {
-        this.switchAuthTab('qr', [tabBtnPin, tabBtnQr, tabBtnToken], [panelPin, panelQr, panelToken]);
+        this.switchAuthTab('qr', allTabs, allPanels);
         this.startCamera();
       });
+    }
+    if (tabBtnToken) {
       tabBtnToken.addEventListener('click', () => {
-        this.switchAuthTab('token', [tabBtnPin, tabBtnQr, tabBtnToken], [panelPin, panelQr, panelToken]);
+        this.switchAuthTab('token', allTabs, allPanels);
         this.stopCamera();
+      });
+    }
+
+    // OTP Input & Email Handlers
+    const inputOtp = document.getElementById('input-otp-code');
+    const btnSubmitOtp = document.getElementById('btn-submit-otp');
+    const btnSendEmailOtp = document.getElementById('btn-send-email-otp');
+    const inputEmail = document.getElementById('input-auth-email');
+
+    if (inputOtp) {
+      inputOtp.addEventListener('input', (e) => {
+        const val = e.target.value.replace(/\D/g, '');
+        e.target.value = val;
+        if (val.length === 6) {
+          this.submitOtp(val);
+        }
+      });
+      inputOtp.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          this.submitOtp(inputOtp.value);
+        }
+      });
+    }
+
+    if (btnSubmitOtp && inputOtp) {
+      btnSubmitOtp.addEventListener('click', () => {
+        this.submitOtp(inputOtp.value);
+      });
+    }
+
+    if (btnSendEmailOtp && inputEmail) {
+      btnSendEmailOtp.addEventListener('click', async () => {
+        const email = inputEmail.value.trim();
+        if (!email || !email.includes('@')) {
+          this.showOtpAlert('Vui lòng nhập địa chỉ email hợp lệ');
+          return;
+        }
+        btnSendEmailOtp.disabled = true;
+        btnSendEmailOtp.textContent = '⏳ Đang gửi mã...';
+        try {
+          const res = await this.api.requestOtp(email);
+          this.showOtpAlert(res.message || 'Mã OTP đã được gửi về email!', 'success');
+          this.state.addToast({
+            type: 'info',
+            title: 'Mã OTP đã gửi',
+            message: `Kiểm tra hòm thư ${email} để lấy mã 6 số.`,
+          });
+          if (inputOtp) inputOtp.focus();
+        } catch (err) {
+          this.showOtpAlert(err.message || 'Không thể gửi mã OTP');
+        } finally {
+          setTimeout(() => {
+            btnSendEmailOtp.disabled = false;
+            btnSendEmailOtp.textContent = '📧 Gửi lại mã OTP';
+          }, 3000);
+        }
       });
     }
 
@@ -105,15 +176,16 @@ export class AuthModal {
     tabBtns.forEach((btn) => btn.classList.remove('active'));
     panels.forEach((panel) => panel.classList.add('hidden'));
 
-    if (mode === 'pin') {
-      tabBtns[0].classList.add('active');
-      panels[0].classList.remove('hidden');
-    } else if (mode === 'qr') {
-      tabBtns[1].classList.add('active');
-      panels[1].classList.remove('hidden');
-    } else if (mode === 'token') {
-      tabBtns[2].classList.add('active');
-      panels[2].classList.remove('hidden');
+    const tabMap = {
+      otp: { tab: document.getElementById('tab-btn-otp'), panel: document.getElementById('auth-panel-otp') },
+      pin: { tab: document.getElementById('tab-btn-pin'), panel: document.getElementById('auth-panel-pin') },
+      qr: { tab: document.getElementById('tab-btn-qr'), panel: document.getElementById('auth-panel-qr') },
+      token: { tab: document.getElementById('tab-btn-token'), panel: document.getElementById('auth-panel-token') },
+    };
+
+    if (tabMap[mode] && tabMap[mode].tab && tabMap[mode].panel) {
+      tabMap[mode].tab.classList.add('active');
+      tabMap[mode].panel.classList.remove('hidden');
     }
   }
 
@@ -255,14 +327,43 @@ export class AuthModal {
     this.onAuthSuccess(token);
   }
 
+  async submitOtp(code) {
+    if (this.isSubmitting) return;
+    const cleanCode = String(code || '').trim();
+    if (!cleanCode || cleanCode.length < 6) {
+      this.showOtpAlert('Vui lòng nhập đủ 6 chữ số mã OTP');
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.clearAlert();
+
+    const inputEmail = document.getElementById('input-auth-email');
+    const email = inputEmail ? inputEmail.value.trim() : null;
+
+    try {
+      const res = await this.api.verifyOtp(cleanCode, email || null);
+      if (res && res.token) {
+        this.onAuthSuccess(res.token);
+      } else {
+        throw new Error('Không nhận được token từ máy chủ');
+      }
+    } catch (err) {
+      this.showOtpAlert(err.message || 'Mã OTP không đúng hoặc đã hết hạn');
+      this.vibrate([100, 50, 100]);
+    } finally {
+      this.isSubmitting = false;
+    }
+  }
+
   onAuthSuccess(token) {
     this.state.setToken(token);
     this.hide();
     this.ws.connect(token);
     this.state.addToast({
       type: 'success',
-      title: 'Authenticated',
-      message: 'Mobile device paired successfully!',
+      title: 'Đăng nhập thành công',
+      message: 'Thiết bị di động đã được kết nối với Antigravity PC!',
     });
   }
 
@@ -270,6 +371,15 @@ export class AuthModal {
     const alertEl = document.getElementById('pin-alert');
     if (alertEl) {
       alertEl.textContent = message;
+      alertEl.classList.remove('hidden');
+    }
+  }
+
+  showOtpAlert(message, type = 'error') {
+    const alertEl = document.getElementById('otp-alert');
+    if (alertEl) {
+      alertEl.textContent = message;
+      alertEl.className = `auth-alert ${type === 'success' ? 'success' : ''}`;
       alertEl.classList.remove('hidden');
     }
   }
@@ -285,8 +395,10 @@ export class AuthModal {
   clearAlert() {
     const pinAlert = document.getElementById('pin-alert');
     const qrAlert = document.getElementById('qr-alert');
+    const otpAlert = document.getElementById('otp-alert');
     if (pinAlert) pinAlert.classList.add('hidden');
     if (qrAlert) qrAlert.classList.add('hidden');
+    if (otpAlert) otpAlert.classList.add('hidden');
   }
 
   vibrate(pattern) {

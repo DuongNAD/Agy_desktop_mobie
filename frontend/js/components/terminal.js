@@ -206,7 +206,14 @@ export class TerminalComponent {
       if (ctrlBtn) ctrlBtn.classList.remove('active');
     }
 
-    this.ws.sendTerminalInput(payload);
+    // Route to SSH or local terminal based on current mode
+    const mode = this.state.get('terminalMode');
+    const sshWs = this.state.get('sshWebSocket');
+    if (mode === 'ssh' && sshWs && sshWs.readyState === WebSocket.OPEN) {
+      sshWs.send(JSON.stringify({ type: 'input', data: payload }));
+    } else {
+      this.ws.sendTerminalInput(payload);
+    }
   }
 
   sendInterrupt() {

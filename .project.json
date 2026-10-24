@@ -1,0 +1,7 @@
+{
+  "name": "Agy_desktop_mobie",
+  "category": "01_AI_Agents",
+  "tech": "Python",
+  "command": "python -m ...",
+  "description": "AgyMobile - Antigravity Desktop Workspace Mobile Controller"
+}

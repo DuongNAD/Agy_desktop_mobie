@@ -125,6 +125,27 @@ export class ApiClient {
     });
   }
 
+  async requestOtp(email = null) {
+    return this.request('/api/auth/otp/request', {
+      method: 'POST',
+      body: { email: email ? String(email).trim() : null },
+    });
+  }
+
+  async verifyOtp(otp, email = null) {
+    return this.request('/api/auth/otp/verify', {
+      method: 'POST',
+      body: {
+        otp: String(otp).trim(),
+        email: email ? String(email).trim() : null,
+      },
+    });
+  }
+
+  async getCurrentOtp() {
+    return this.request('/api/auth/otp/current', { method: 'GET' });
+  }
+
   async getQrCode(format = 'png', token = null) {
     const params = new URLSearchParams({ format });
     if (token) params.set('token', token);

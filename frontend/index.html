@@ -230,12 +230,61 @@
         <div class="terminal-header-bar">
           <div class="terminal-title-group">
             <span class="term-prompt-glyph">>_</span>
-            <span class="term-title">PowerShell 7 (Windows)</span>
+            <select id="terminal-type-selector" class="terminal-type-select" aria-label="Terminal Type">
+              <option value="local" selected>PowerShell (Local)</option>
+              <option value="ssh">SSH Remote</option>
+            </select>
           </div>
           <div class="terminal-actions">
+            <button id="btn-ssh-connect" class="btn-terminal-action ssh-btn" style="display:none;" title="Connect SSH">🔌 SSH</button>
             <button id="btn-terminal-clear" class="btn-terminal-action">Clear</button>
             <button id="btn-terminal-restart" class="btn-terminal-action">Restart</button>
             <button id="btn-terminal-kill" class="btn-terminal-action danger">Ctrl+C</button>
+          </div>
+        </div>
+
+        <!-- SSH Connection Modal -->
+        <div id="ssh-connect-modal" class="ssh-modal hidden" role="dialog" aria-label="SSH Connection">
+          <div class="ssh-modal-content">
+            <div class="ssh-modal-header">
+              <h3>🔌 SSH Connection</h3>
+              <button id="btn-ssh-modal-close" class="ssh-modal-close">&times;</button>
+            </div>
+            <form id="form-ssh-connect" class="ssh-form">
+              <div class="ssh-form-row">
+                <label for="ssh-host">Host / IP</label>
+                <input type="text" id="ssh-host" placeholder="192.168.1.100 or vps.example.com" required autocomplete="off" />
+              </div>
+              <div class="ssh-form-row ssh-row-split">
+                <div>
+                  <label for="ssh-port">Port</label>
+                  <input type="number" id="ssh-port" value="22" min="1" max="65535" />
+                </div>
+                <div>
+                  <label for="ssh-username">Username</label>
+                  <input type="text" id="ssh-username" value="root" autocomplete="off" />
+                </div>
+              </div>
+              <div class="ssh-form-row">
+                <label for="ssh-password">Password</label>
+                <input type="password" id="ssh-password" placeholder="SSH Password" autocomplete="off" />
+              </div>
+              <div class="ssh-form-row">
+                <label for="ssh-name">Connection Name (optional)</label>
+                <input type="text" id="ssh-name" placeholder="My VPS" autocomplete="off" />
+              </div>
+              <div class="ssh-form-actions">
+                <button type="submit" class="btn-ssh-connect-submit">🔗 Connect</button>
+                <button type="button" id="btn-ssh-cancel" class="btn-ssh-cancel">Cancel</button>
+              </div>
+              <div id="ssh-connect-status" class="ssh-status"></div>
+            </form>
+
+            <!-- Active SSH Sessions List -->
+            <div id="ssh-sessions-list" class="ssh-sessions">
+              <h4>Active Sessions</h4>
+              <div id="ssh-sessions-container"></div>
+            </div>
           </div>
         </div>
 
@@ -372,6 +421,22 @@
     </main>
 
     <!-- ================================================================= -->
+    <!-- PWA Install Banner for Android & Mobile -->
+    <div id="pwa-install-banner" class="pwa-install-banner hidden" role="region" aria-label="Install Application">
+      <div class="pwa-banner-content">
+        <span class="pwa-icon">📱</span>
+        <div class="pwa-text">
+          <strong>Cài đặt AgyMobile App</strong>
+          <span>Thêm ứng dụng vào màn hình chính để dùng toàn màn hình</span>
+        </div>
+      </div>
+      <div class="pwa-banner-actions">
+        <button id="btn-pwa-install" class="btn-pwa-action">Cài đặt</button>
+        <button id="btn-pwa-dismiss" class="btn-pwa-close" aria-label="Dismiss Install Banner">✕</button>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
     <!-- Bottom Tab Navigation Bar -->
     <!-- ================================================================= -->
     <nav class="app-bottom-nav" role="navigation" aria-label="Main Navigation">
@@ -417,21 +482,40 @@
       <div class="modal-sheet">
         <div class="modal-drag-handle" aria-hidden="true"></div>
         <div class="modal-header">
-          <h2 id="auth-modal-title" class="modal-title">Device Pairing & Auth</h2>
+          <h2 id="auth-modal-title" class="modal-title">Xác thực & Kết nối Thiết bị</h2>
           <button id="btn-close-auth-modal" class="btn-modal-close" aria-label="Close Auth Modal">✕</button>
         </div>
 
         <div class="modal-body">
           <!-- Auth Mode Toggle -->
           <div class="auth-tabs">
-            <button id="tab-btn-pin" class="auth-tab-btn active">Enter PIN</button>
-            <button id="tab-btn-qr" class="auth-tab-btn">Scan PC QR</button>
-            <button id="tab-btn-token" class="auth-tab-btn">Paste Token</button>
+            <button id="tab-btn-otp" class="auth-tab-btn active">Mã OTP / Email</button>
+            <button id="tab-btn-pin" class="auth-tab-btn">Mã PIN</button>
+            <button id="tab-btn-qr" class="auth-tab-btn">Quét QR PC</button>
+            <button id="tab-btn-token" class="auth-tab-btn">Dán Token</button>
           </div>
 
-          <!-- PIN Pad Panel -->
-          <div id="auth-panel-pin" class="auth-panel">
-            <p class="auth-instruction">Enter the 6-digit PIN shown in your PC console:</p>
+          <!-- 1. OTP & Email Panel -->
+          <div id="auth-panel-otp" class="auth-panel">
+            <p class="auth-instruction">Nhập mã OTP 6 số hiển thị trên màn hình PC hoặc nhận qua Email:</p>
+            <div class="otp-input-group">
+              <input type="tel" id="input-otp-code" class="otp-text-input" placeholder="0 0 0 0 0 0" maxlength="6" autocomplete="one-time-code" inputmode="numeric" />
+              <button id="btn-submit-otp" class="btn-primary-block" style="margin-top:12px;">🔑 Xác thực & Kết nối</button>
+            </div>
+            
+            <div class="auth-divider"><span>HOẶC NHẬN MÃ QUA EMAIL</span></div>
+            
+            <div class="email-otp-box">
+              <input type="email" id="input-auth-email" class="token-textarea" style="min-height:44px;height:44px;resize:none;" placeholder="Nhập địa chỉ email của bạn..." />
+              <button id="btn-send-email-otp" class="btn-primary-block" style="margin-top:8px;background:var(--bg-elevated);border:1px solid var(--cyber-cyan);color:var(--cyber-cyan);">📧 Gửi mã OTP về Email</button>
+            </div>
+
+            <div id="otp-alert" class="auth-alert hidden" style="margin-top:12px;"></div>
+          </div>
+
+          <!-- 2. PIN Pad Panel -->
+          <div id="auth-panel-pin" class="auth-panel hidden">
+            <p class="auth-instruction">Nhập mã PIN bảo mật 6 số từ console máy tính:</p>
             <div class="pin-display">
               <span class="pin-dot"></span>
               <span class="pin-dot"></span>
@@ -457,22 +541,22 @@
             </div>
           </div>
 
-          <!-- QR Scanner Panel -->
+          <!-- 3. QR Scanner Panel -->
           <div id="auth-panel-qr" class="auth-panel hidden">
-            <p class="auth-instruction">Point camera at the QR code displayed on your PC screen:</p>
+            <p class="auth-instruction">Hướng camera vào mã QR hiển thị trên màn hình PC:</p>
             <div class="qr-camera-container">
               <video id="qr-video-preview" class="qr-video-preview" playsinline></video>
               <div class="qr-scanner-reticle"></div>
             </div>
             <div id="qr-alert" class="auth-alert hidden"></div>
-            <button id="btn-start-scanner" class="btn-primary-block">Start Camera</button>
+            <button id="btn-start-scanner" class="btn-primary-block">Bật Camera Quét QR</button>
           </div>
 
-          <!-- Token Input Panel -->
+          <!-- 4. Token Input Panel -->
           <div id="auth-panel-token" class="auth-panel hidden">
-            <p class="auth-instruction">Paste manual JWT Token or Tunnel Pairing URL:</p>
-            <textarea id="input-token-paste" class="token-textarea" placeholder="Paste eyJhbGciOi... or http://.../?token=..."></textarea>
-            <button id="btn-submit-token" class="btn-primary-block">Connect with Token</button>
+            <p class="auth-instruction">Dán JWT Token hoặc đường dẫn Pairing URL:</p>
+            <textarea id="input-token-paste" class="token-textarea" placeholder="Dán token eyJhbGciOi... hoặc link http://.../?token=..."></textarea>
+            <button id="btn-submit-token" class="btn-primary-block">Kết nối với Token</button>
           </div>
         </div>
       </div>

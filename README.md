@@ -111,52 +111,59 @@
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start — 1-Click Cross-Platform Launchers
 
-### Option A: 1-Click Startup on Windows (Recommended)
+### 🪟 Windows (1-Click Installer & Launcher)
 
-Double-click `start.bat` in the project root or run from Command Prompt / PowerShell:
+* **Cài đặt & Tạo Lối Tắt Desktop (1-Click)**: Click đúp vào [`install.bat`](file:///e:/Project/Agy_desktop_mobie/install.bat) để tự động cấu hình môi trường, cài đặt thư viện và tạo icon AgyMobile trên màn hình Desktop.
+* **Khởi động Nhanh**: Click đúp vào [`start.bat`](file:///e:/Project/Agy_desktop_mobie/start.bat) hoặc icon trên Desktop.
 
 ```cmd
+:: Khởi động trên Windows
 start.bat
-```
 
-**`start.bat` automatically handles:**
-1. Checks for Python 3.11+ or Astral `uv`.
-2. Creates and manages the `.venv` virtual environment.
-3. Automatically installs or updates dependencies (`fastapi`, `uvicorn`, `psutil`, `qrcode`, `pyjwt`).
-4. Detects LAN IP and renders a high-contrast Unicode QR code in the terminal.
-5. Launches the default desktop browser to `http://localhost:8765`.
-6. Starts the Uvicorn ASGI server on `0.0.0.0:8765`.
-
-#### Optional Flags for `start.bat`
-```cmd
-start.bat --no-browser      :: Start server without opening default browser
-start.bat --install         :: Force reinstallation of project dependencies
-start.bat --port 8888       :: Run server on a custom port
+:: Tùy chọn nâng cao
+start.bat --no-browser      :: Chạy server không tự mở trình duyệt PC
+start.bat --install         :: Cài đặt lại thư viện mới nhất
 ```
 
 ---
 
-### Option B: Fast Runner (Instant Developer Launch)
+### 🍎 macOS & 🐧 Linux (1-Click Installer & Launcher)
 
-For daily development without dependency checks (< 0.05s startup):
-
-```cmd
-run.bat
-```
+* **Bộ cài đặt 1-Click**: Mở Terminal trong thư mục dự án và chạy:
+  ```bash
+  chmod +x install.sh start.sh AgyMobile.command
+  ./install.sh
+  ```
+* **Khởi động Nhanh**:
+  * **macOS**: Click đúp vào file [`AgyMobile.command`](file:///e:/Project/Agy_desktop_mobie/AgyMobile.command) từ Finder, hoặc chạy `./start.sh`.
+  * **Linux**: Chạy `./start.sh`.
 
 ---
 
-### Option C: Manual Setup via uv / pip
+### 📱 Android & iOS (Cài đặt App 1-Chạm & Quét Mã QR)
 
-```bash
-# 1. Create and activate virtual environment
-python -m venv .venv
-.venv\Scripts\activate
+1. **Quét Mã QR Kết Nối**: Mở Camera trên điện thoại Android / iPhone và quét mã QR hiển thị trên màn hình máy tính (hoặc gõ địa chỉ `http://<LAN_IP>:8765`).
+2. **Cài Đặt Lên Màn Hình Chính (PWA)**:
+   * **Android (Chrome / Edge)**: Nhấn vào thông báo **"📱 Cài đặt AgyMobile App"** xuất hiện trên màn hình để cài đặt ứng dụng độc lập toàn màn hình.
+   * **iOS (Safari)**: Nhấn nút **Share (Chia sẻ)** ⎋ -> chọn **"Thêm vào Màn hình chính" (Add to Home Screen)**.
+3. **Android Termux (Tùy chọn chạy server trực tiếp)**:
+   ```bash
+   chmod +x install_android.sh && ./install_android.sh
+   ```
 
-# 2. Install package in editable mode
-pip install -e .
+---
+
+### 🔑 Các Cơ Chế Xác Thực Linh Hoạt (Multi-Method Authentication)
+
+1. **🔢 Mã OTP 6 Số Động (Dynamic Session OTP)**: Máy chủ tự động tạo mã OTP 6 số hiển thị trực tiếp trên cửa sổ dòng lệnh PC. Nhập 6 số trên điện thoại để vào ngay.
+2. **📧 Xác Thực Qua Email (Email OTP)**: Nhập email -> nhấn "Gửi mã OTP" -> nhập mã 6 số nhận được từ hòm thư để đăng nhập.
+3. **📷 Quét Mã QR Tức Thì (Instant QR Pairing)**: Quét mã QR có nhúng sẵn chữ ký JWT token an toàn — tự động đăng nhập 100% không cần gõ phím.
+4. **🔒 Mã PIN Bảo Mật (6-Digit PIN)**: Bàn phím số cảm ứng có phản hồi rung (Haptic feedback).
+5. **💾 Ghi Nhớ Thiết Bị (Remember Device)**: Lưu phiên an toàn vào máy, không cần đăng nhập lại các lần mở tiếp theo.
+
+---
 
 # 3. Launch server
 python -m backend.main

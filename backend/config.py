@@ -11,7 +11,7 @@ import re
 import secrets
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -67,6 +67,44 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("AGY_TOKEN_EXPIRY_SECONDS", "TOKEN_EXPIRY_SECONDS"),
     )
 
+    # OTP & Email Authentication
+    AUTH_OTP_ENABLED: bool = Field(
+        default=True,
+        validation_alias=AliasChoices("AGY_AUTH_OTP_ENABLED", "AUTH_OTP_ENABLED", "OTP_ENABLED"),
+    )
+    OTP_EXPIRY_SECONDS: int = Field(
+        default=300,
+        validation_alias=AliasChoices("AGY_OTP_EXPIRY_SECONDS", "OTP_EXPIRY_SECONDS"),
+    )
+    ADMIN_EMAIL: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("AGY_ADMIN_EMAIL", "ADMIN_EMAIL"),
+    )
+    SMTP_HOST: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("AGY_SMTP_HOST", "SMTP_HOST"),
+    )
+    SMTP_PORT: int = Field(
+        default=587,
+        validation_alias=AliasChoices("AGY_SMTP_PORT", "SMTP_PORT"),
+    )
+    SMTP_USER: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("AGY_SMTP_USER", "SMTP_USER"),
+    )
+    SMTP_PASSWORD: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("AGY_SMTP_PASSWORD", "SMTP_PASSWORD"),
+    )
+    SMTP_FROM: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("AGY_SMTP_FROM", "SMTP_FROM"),
+    )
+    SMTP_TLS: bool = Field(
+        default=True,
+        validation_alias=AliasChoices("AGY_SMTP_TLS", "SMTP_TLS"),
+    )
+
     # Cross-Origin Resource Sharing
     CORS_ORIGINS: Union[str, List[str]] = Field(
         default=["*"],
@@ -95,6 +133,35 @@ class Settings(BaseSettings):
     RATE_LIMIT_LOCKOUT_SECONDS: int = Field(
         default=300,
         validation_alias=AliasChoices("AGY_RATE_LIMIT_LOCKOUT", "RATE_LIMIT_LOCKOUT_SECONDS"),
+    )
+
+    # Tunnel Configuration
+    TUNNEL_ENABLED: bool = Field(
+        default=True,
+        validation_alias=AliasChoices("AGY_TUNNEL_ENABLED", "TUNNEL_ENABLED"),
+        description="Auto-start tunnel on server startup for remote access",
+    )
+    TUNNEL_PROVIDER: str = Field(
+        default="cloudflare",
+        validation_alias=AliasChoices("AGY_TUNNEL_PROVIDER", "TUNNEL_PROVIDER"),
+        description="Tunnel provider: cloudflare, ngrok, or none",
+    )
+    TUNNEL_STARTUP_TIMEOUT: int = Field(
+        default=30,
+        validation_alias=AliasChoices("AGY_TUNNEL_TIMEOUT", "TUNNEL_STARTUP_TIMEOUT"),
+        description="Max seconds to wait for tunnel URL detection",
+    )
+
+    # Terminal Session Persistence
+    TERMINAL_IDLE_TIMEOUT: int = Field(
+        default=1800,
+        validation_alias=AliasChoices("AGY_TERMINAL_IDLE_TIMEOUT", "TERMINAL_IDLE_TIMEOUT"),
+        description="Seconds before idle terminal sessions are cleaned up (default: 30 min)",
+    )
+    TERMINAL_MAX_SESSIONS: int = Field(
+        default=10,
+        validation_alias=AliasChoices("AGY_TERMINAL_MAX_SESSIONS", "TERMINAL_MAX_SESSIONS"),
+        description="Maximum concurrent terminal sessions",
     )
 
     @field_validator("CORS_ORIGINS", mode="after")

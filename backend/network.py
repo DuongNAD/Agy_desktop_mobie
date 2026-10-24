@@ -227,6 +227,7 @@ def print_startup_banner(
     token: Optional[str] = None,
     public_url: Optional[str] = None,
     pairing_url: Optional[str] = None,
+    otp: Optional[str] = None,
 ) -> None:
     """Print framed server startup banner with compact QR code to console."""
     # Ensure stdout handles UTF-8 on Windows
@@ -254,6 +255,8 @@ def print_startup_banner(
         print(f"│{line.center(width - 2)}│")
     print(f"├{sep}┤")
     print(f"│  ► Mobile URL : {target_url:<47}│")
+    if otp:
+        print(f"│  ► Session OTP: {otp:<47}│")
     print(f"│  ► Access PIN : {pin:<47}│")
     if token:
         masked_tok = token[:12] + "..." + token[-6:] if len(token) > 20 else token

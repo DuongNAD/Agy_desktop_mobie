@@ -30,7 +30,7 @@ class TerminalSession:
         self,
         session_id: str = "default",
         max_buffer_lines: int = 1000,
-        idle_timeout_seconds: int = 300,
+        idle_timeout_seconds: int = 1800,
     ) -> None:
         self.session_id = session_id
         self.max_buffer_lines = max_buffer_lines
@@ -383,7 +383,7 @@ class TerminalManager:
             if session:
                 await session.terminate()
 
-    async def cleanup_idle_sessions(self, max_idle_seconds: int = 300) -> None:
+    async def cleanup_idle_sessions(self, max_idle_seconds: int = 1800) -> None:
         """Terminate sessions that have no active listeners and have been idle."""
         async with self._lock:
             now = time.time()

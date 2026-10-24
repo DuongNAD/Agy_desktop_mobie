@@ -15,6 +15,7 @@ import { ArtifactsManager } from './components/artifacts.js';
 import { FileExplorer } from './components/file_explorer.js';
 import { TerminalComponent } from './components/terminal.js';
 import { TelemetryComponent } from './components/telemetry.js';
+import { SSHComponent } from './components/ssh.js';
 
 export class App {
   constructor() {
@@ -43,6 +44,7 @@ export class App {
     this.artifacts = new ArtifactsManager(this.state, this.api);
     this.fileExplorer = new FileExplorer(this.state, this.api);
     this.terminal = new TerminalComponent(this.state, this.ws, this.ansiUp);
+    this.ssh = new SSHComponent(this.state, this.ws, this.api);
     this.telemetry = new TelemetryComponent(this.state, this.api, this.ws);
   }
 
@@ -130,10 +132,41 @@ export class App {
 
   initPWAInstallPrompt() {
     if (typeof window !== 'undefined') {
+      const banner = document.getElementById('pwa-install-banner');
+      const btnInstall = document.getElementById('btn-pwa-install');
+      const btnDismiss = document.getElementById('btn-pwa-dismiss');
+
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         this.deferredInstallPrompt = e;
+        if (banner) {
+          banner.classList.remove('hidden');
+        }
       });
+
+      if (btnInstall) {
+        btnInstall.addEventListener('click', async () => {
+          if (this.deferredInstallPrompt) {
+            this.deferredInstallPrompt.prompt();
+            const { outcome } = await this.deferredInstallPrompt.userChoice;
+            if (outcome === 'accepted') {
+              this.state.addToast({
+                type: 'success',
+                title: 'Đã cài đặt App',
+                message: 'AgyMobile đã được thêm vào màn hình chính!',
+              });
+            }
+            this.deferredInstallPrompt = null;
+            if (banner) banner.classList.add('hidden');
+          }
+        });
+      }
+
+      if (btnDismiss && banner) {
+        btnDismiss.addEventListener('click', () => {
+          banner.classList.add('hidden');
+        });
+      }
     }
   }
 

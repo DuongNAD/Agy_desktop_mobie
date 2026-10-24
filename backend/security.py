@@ -9,6 +9,7 @@ from __future__ import annotations
 import hmac
 import os
 import re
+import secrets
 import threading
 import time
 import urllib.parse
@@ -523,3 +524,158 @@ class PathSandbox:
     ) -> bool:
         check_root = Path(root_dir).resolve() if root_dir else self.root
         return is_safe_sandbox_path(target_path, root_dir=check_root)
+
+
+# =====================================================================
+# 4. Dynamic OTP & Email Authentication Subsystem
+# =====================================================================
+
+class OTPRecord:
+    def __init__(self, otp: str, user: str = "admin", email: Optional[str] = None, ttl_seconds: int = 300) -> None:
+        self.otp = otp
+        self.user = user
+        self.email = email.strip().lower() if email else None
+        self.created_at = time.time()
+        self.expires_at = self.created_at + ttl_seconds
+        self.attempts = 0
+        self.max_attempts = 5
+
+    def is_valid(self, provided_otp: str) -> bool:
+        if time.time() > self.expires_at:
+            return False
+        if self.attempts >= self.max_attempts:
+            return False
+        self.attempts += 1
+        return hmac.compare_digest(self.otp.strip().encode("utf-8"), str(provided_otp).strip().encode("utf-8"))
+
+
+class OTPManager:
+    """Thread-safe dynamic OTP generation, caching, and verification engine."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._otps: Dict[str, OTPRecord] = {}
+        self._latest_otp: Optional[str] = None
+        self._latest_otp_time: float = 0
+
+    def generate_otp(
+        self,
+        email: Optional[str] = None,
+        user: str = "admin",
+        ttl_seconds: Optional[int] = None,
+    ) -> Tuple[str, int]:
+        """Generate a cryptographically secure 6-digit numeric OTP."""
+        settings = get_settings()
+        ttl = ttl_seconds if ttl_seconds is not None else settings.OTP_EXPIRY_SECONDS
+        
+        # 6-digit cryptographic numeric code
+        otp_code = f"{secrets.randbelow(900000) + 100000:06d}"
+        
+        record = OTPRecord(otp=otp_code, user=user, email=email, ttl_seconds=ttl)
+        with self._lock:
+            now = time.time()
+            self._otps = {k: v for k, v in self._otps.items() if v.expires_at > now}
+            self._otps[otp_code] = record
+            if email:
+                self._otps[f"email:{email.strip().lower()}"] = record
+            self._latest_otp = otp_code
+            self._latest_otp_time = now
+            
+        return otp_code, ttl
+
+    def get_current_active_otp(self) -> str:
+        """Get the latest non-expired OTP for desktop console/pairing banner."""
+        with self._lock:
+            if self._latest_otp:
+                rec = self._otps.get(self._latest_otp)
+                if rec and time.time() < rec.expires_at:
+                    return self._latest_otp
+        # Generate fresh if expired
+        otp, _ = self.generate_otp(user="admin")
+        return otp
+
+    def verify_otp(self, provided_otp: str, email: Optional[str] = None) -> bool:
+        """Verify OTP with constant-time matching and attempt throttling."""
+        if not provided_otp or not str(provided_otp).strip():
+            return False
+        clean_otp = str(provided_otp).strip()
+        now = time.time()
+        
+        with self._lock:
+            self._otps = {k: v for k, v in self._otps.items() if v.expires_at > now}
+            
+            record = self._otps.get(clean_otp)
+            if not record and email:
+                record = self._otps.get(f"email:{email.strip().lower()}")
+                
+            if not record:
+                return False
+                
+            if email and record.email:
+                if record.email != email.strip().lower():
+                    return False
+                    
+            valid = record.is_valid(clean_otp)
+            if valid:
+                self._otps.pop(clean_otp, None)
+                if record.email:
+                    self._otps.pop(f"email:{record.email}", None)
+                if self._latest_otp == clean_otp:
+                    self._latest_otp = None
+                return True
+            return False
+
+    def send_email_otp(self, to_email: str, otp_code: str, ttl_seconds: int = 300) -> bool:
+        """Send OTP to target email address via SMTP or stdout fallback."""
+        settings = get_settings()
+        clean_email = to_email.strip()
+        
+        if not settings.SMTP_HOST:
+            print(f"\n[AgyMobile OTP] ===================================================")
+            print(f"[AgyMobile OTP] Email dispatch to: {clean_email}")
+            print(f"[AgyMobile OTP] 6-Digit OTP Code : >>> {otp_code} <<< (Valid: {ttl_seconds}s)")
+            print(f"[AgyMobile OTP] ===================================================\n")
+            return True
+            
+        import smtplib
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.text import MIMEText
+
+        sender = settings.SMTP_FROM or settings.SMTP_USER or "noreply@agymobile.local"
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"🔑 Mã xác thực AgyMobile: {otp_code}"
+        msg["From"] = sender
+        msg["To"] = clean_email
+
+        text_content = f"Mã xác thực AgyMobile của bạn là: {otp_code}\nMã có hiệu lực trong {ttl_seconds // 60} phút."
+        html_content = f"""
+        <div style="font-family: Arial, sans-serif; background-color: #0f172a; color: #f8fafc; padding: 24px; border-radius: 12px; max-width: 480px; margin: auto;">
+            <h2 style="color: #38bdf8; margin-top: 0;">AgyMobile Remote Authentication</h2>
+            <p style="color: #94a3b8; font-size: 14px;">Bạn đang đăng nhập vào phiên điều khiển Antigravity Desktop từ thiết bị di động.</p>
+            <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 16px; text-align: center; margin: 20px 0;">
+                <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #38bdf8;">{otp_code}</span>
+            </div>
+            <p style="color: #64748b; font-size: 12px;">Mã OTP có hiệu lực trong {ttl_seconds // 60} phút. Không chia sẻ mã này cho người khác.</p>
+        </div>
+        """
+        msg.attach(MIMEText(text_content, "plain", "utf-8"))
+        msg.attach(MIMEText(html_content, "html", "utf-8"))
+
+        def _send() -> None:
+            try:
+                server = smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=10)
+                if settings.SMTP_TLS:
+                    server.starttls()
+                if settings.SMTP_USER and settings.SMTP_PASSWORD:
+                    server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+                server.sendmail(sender, [clean_email], msg.as_string())
+                server.quit()
+            except Exception as e:
+                print(f"[AgyMobile Auth] Failed to send email to {clean_email}: {e}")
+
+        threading.Thread(target=_send, daemon=True).start()
+        return True
+
+
+otp_manager = OTPManager()
+
